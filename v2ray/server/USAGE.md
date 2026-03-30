@@ -313,11 +313,11 @@ http://localhost:2017/api/pac/gfwlist.pac
 
 ```bash
 sudo mkdir -p /etc/systemd/system/containerd.service.d
-
+# 用实际IP替换（比如宿主机IP）
 sudo tee /etc/systemd/system/containerd.service.d/http-proxy.conf << 'EOF'
 [Service]
-Environment="HTTP_PROXY=<http://localhost:20171>"
-Environment="HTTPS_PROXY=<http://localhost:20171>"
+Environment="HTTP_PROXY=http://127.0.0.1:20171"
+Environment="HTTPS_PROXY=http://127.0.0.1:20171"
 Environment="NO_PROXY=localhost,127.0.0.1,11.11.11.0/24,10.96.0.0/12,192.168.0.0/16,.cluster.local"
 EOF
 
