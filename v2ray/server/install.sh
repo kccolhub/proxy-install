@@ -88,11 +88,16 @@ fi
 mkdir -p "$V2RAY_INSTALL_DIR"
 
 # 解压 V2Ray Core
+echo -e "${YELLOW}  正在解压 v2ray-linux-64.zip...${NC}"
 unzip -q "$BIN_DIR/v2ray-linux-64.zip" -d "$V2RAY_INSTALL_DIR"
 
-# 设置权限
-chmod +x "$V2RAY_INSTALL_DIR/v2ray"
-chmod +x "$V2RAY_INSTALL_DIR/v2ctl"
+# 显示解压的文件
+echo -e "${YELLOW}  已解压的文件:${NC}"
+ls -la "$V2RAY_INSTALL_DIR" | grep -E "^-" | awk '{print "    " $NF}'
+
+# 为所有文件设置可执行权限
+echo -e "${YELLOW}  设置文件权限...${NC}"
+find "$V2RAY_INSTALL_DIR" -maxdepth 1 -type f -exec chmod +x {} \;
 
 # 创建 V2Ray 用户（如果不存在）
 if ! id -u "v2ray" > /dev/null 2>&1; then
@@ -103,6 +108,16 @@ fi
 chown -R v2ray:v2ray "$V2RAY_INSTALL_DIR"
 mkdir -p /etc/v2ray
 chown -R v2ray:v2ray /etc/v2ray
+
+# 直接复制可执行文件到系统 PATH
+echo -e "${YELLOW}  安装到 /usr/local/bin...${NC}"
+find "$V2RAY_INSTALL_DIR" -maxdepth 1 -type f ! -name "*.json" ! -name "*.md" ! -name "*.txt" -exec bash -c '
+   file="$1"
+   name=$(basename "$file")
+   cp "$file" /usr/local/bin/"$name"
+   chmod +x /usr/local/bin/"$name"
+   echo "    已安装: $name"
+' _ {} \;
 
 echo -e "${GREEN}✓ V2Ray Core 安装完成${NC}"
 

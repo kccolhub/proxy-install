@@ -274,6 +274,7 @@ V2RayA 支持多种出站协议：
 export http_proxy=http://localhost:20171
 export https_proxy=http://localhost:20171
 export socks5_proxy=socks5://localhost:20170
+export no_proxy=localhost,127.0.0.1,11.11.11.0/24,10.96.0.0/12,192.168.0.0/16,.cluster.local
 ```
 
 #### 方式二：全局代理（永久）
@@ -307,6 +308,24 @@ http://localhost:2017/api/pac/gfwlist.pac
 ```
 
 ### 应用程序代理设置
+
+#### containd代理设置
+
+```bash
+sudo mkdir -p /etc/systemd/system/containerd.service.d
+
+sudo tee /etc/systemd/system/containerd.service.d/http-proxy.conf << 'EOF'
+[Service]
+Environment="HTTP_PROXY=<http://localhost:20171>"
+Environment="HTTPS_PROXY=<http://localhost:20171>"
+Environment="NO_PROXY=localhost,127.0.0.1,11.11.11.0/24,10.96.0.0/12,192.168.0.0/16,.cluster.local"
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl restart containerd
+# 查看 containerd 代理环境变量
+sudo systemctl show containerd | grep -i proxy
+```
 
 #### 浏览器（Chrome/Firefox）
 
