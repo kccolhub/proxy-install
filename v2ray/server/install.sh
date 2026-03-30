@@ -111,12 +111,23 @@ chown -R v2ray:v2ray /etc/v2ray
 
 # 直接复制可执行文件到系统 PATH
 echo -e "${YELLOW}  安装到 /usr/local/bin...${NC}"
+mkdir -p /usr/local/share/v2ray
+
 find "$V2RAY_INSTALL_DIR" -maxdepth 1 -type f ! -name "*.json" ! -name "*.md" ! -name "*.txt" -exec bash -c '
    file="$1"
    name=$(basename "$file")
-   cp "$file" /usr/local/bin/"$name"
-   chmod +x /usr/local/bin/"$name"
-   echo "    已安装: $name"
+   
+   # .dat 文件放到 /usr/local/share/v2ray
+   if echo "$name" | grep -q "\.dat$"; then
+      cp "$file" /usr/local/share/v2ray/"$name"
+      chmod +x /usr/local/share/v2ray/"$name"
+      echo "    已安装: $name -> /usr/local/share/v2ray/"
+   else
+      # 其他可执行文件放到 /usr/local/bin
+      cp "$file" /usr/local/bin/"$name"
+      chmod +x /usr/local/bin/"$name"
+      echo "    已安装: $name -> /usr/local/bin/"
+   fi
 ' _ {} \;
 
 echo -e "${GREEN}✓ V2Ray Core 安装完成${NC}"
