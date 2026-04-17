@@ -1,0 +1,3 @@
+[submodule "singbox-center/yacd-meta"]
+	path = singbox-center/yacd-meta
+	url = https://github.com/kccolhub/Yacd-meta.git
